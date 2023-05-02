@@ -12,7 +12,7 @@ def novo_cliente(): # Função que adiciona um cliente ao banco
     dados_clientes['Tipo de conta'] = tipo_conta
     dados_clientes['Valor inicial da conta'] = valor_inicial_conta
     dados_clientes['Senha'] = senha_usuario
-    clientes.append(dados_clientes.copy())
+    clientes.append(dados_clientes)
     
 '''Essa função itera em cada chave CPF comparando o cpf digitado com o que existe na chave.
 Se estiver, exclui. Senão, pergunta novamente o cpf para apagar.'''
@@ -25,11 +25,12 @@ def apagar_cliente(): # Função que retira algum cliente do banco
     else:
         print(f'CPF {cpf_apagar} não encontrado. Tente novamente mais tarde.')
 
+'''Essa função itera sobre cada dicionário na lista clientes e printa o valor que está
+na chave Nome.'''
 def lista_clientes(): # Função que mostra a lista com clientes
-    for x in range(len(clientes)):
-        print("%s" % clientes[x], end=" ")
-        print(" ")
-    print(" ")
+    print('Lista de clientes:')
+    for indice in range(len(clientes)):
+        print(clientes[indice]['Nome'])
     
 def debito(): # Função que debita um valor
     cpf_debito = float(input("Digite o CPF da sua conta: "))
@@ -83,10 +84,10 @@ while True:
         novo_cliente()
         print(clientes)
     elif entrada == 2:
-        print(apagar_cliente())
+        apagar_cliente()
         print(clientes)
     elif entrada == 3:
-        print(lista_clientes())
+        lista_clientes()
     elif entrada == 4:
         print(debito())
     elif entrada == 5:
