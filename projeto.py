@@ -37,7 +37,7 @@ def debito():
     for indice in range(len(clientes)): # Itera sobre cada dicionário na lista cliente e verifica os dados recebidos.
         if cpf_debito == clientes[indice]['CPF'] and senha_debito == clientes[indice]['Senha'] and clientes[indice]['Tipo de conta'] == 'Comum':
             clientes[indice]['Saldo'] -= valor_debito * 1.05
-            if clientes[indice]['Saldo'] < -1000: # Se os dados estiverem corretos e o saldo ficar 1000 negativo, o valor é devolvido e o débito é cancelado.
+            if clientes[indice]['Saldo'] < -1000: # Se os dados estiverem corretos e o saldo ficar menor do que 1000 negativo, o valor é devolvido e o débito é cancelado.
                 clientes[indice]['Saldo'] += valor_debito * 1.05
                 print('Transação ultrapassou o limite de saldo negativo. Transação cancelada!')
             elif clientes[indice]['Saldo'] >= -1000: # Se os dados estiverem corretos e o saldo ficar acima de 1000 negativo, o débito é realizado
@@ -81,20 +81,38 @@ def transf_contas():
             break
     else:
         print('Dados incorretos.')
-    for indice in range(len(clientes)): # Verifica se o cpf final exsite no sistema.
+    for indice in range(len(clientes)): # Verifica se o cpf final existe no sistema.
         if cpf_final == clientes[indice]['CPF']:
             break
     else:
         print('Dados incorretos. Tente novamente mais tarde.')
     for indice in range(len(clientes)): # Realiza a retirada do valor da conta do cpf de origem.
-        if cpf_origem == clientes[indice]['CPF'] and senha_origem == clientes[indice]['Senha']:
+        if cpf_origem == clientes[indice]['CPF'] and senha_origem == clientes[indice]['Senha'] and clientes[indice]['Tipo de conta'] == 'Comum':
             clientes[indice]['Saldo'] -= valor_transferencia
-            print(f'Transferência realizada com sucesso!\nSaldo: {clientes[indice]["Saldo"]:.2f}')
-            break
-    for indice in range(len(clientes)): # Adiciona o valor à conta do cpf final.
-        if cpf_final == clientes[indice]['CPF']:
-            clientes[indice]['Saldo'] += valor_transferencia
-            break
+            if clientes[indice]['Saldo'] < -1000: # Se o saldo for menor que o permitido, a transação é cancelada
+                clientes[indice]['Saldo'] += valor_transferencia
+                print('Limite de saldo negativo atingido. Tente novamente mais tarde.')
+                break
+            else:
+                for indice in range(len(clientes)): # Adiciona o valor à conta do cpf final.
+                    if cpf_final == clientes[indice]['CPF']:
+                        clientes[indice]['Saldo'] += valor_transferencia
+                    break
+                print(f'Transferência realizada com sucesso!\nSaldo: {clientes[indice]["Saldo"]:.2f}')
+                break
+        elif cpf_origem == clientes[indice]['CPF'] and senha_origem == clientes[indice]['Senha'] and clientes[indice]['Tipo de conta'] == 'Plus':
+            clientes[indice]['Saldo'] -= valor_transferencia
+            if clientes[indice]['Saldo'] < -5000: # Se o saldo for menor que o permitido, a transação é cancelada
+                clientes[indice]['Saldo'] += valor_transferencia
+                print('Limite de saldo negativo atingido. Tente novamente mais tarde.')
+                break
+            else:
+                for indice in range(len(clientes)): # Adiciona o valor à conta do cpf final.
+                    if cpf_final == clientes[indice]['CPF']:
+                        clientes[indice]['Saldo'] += valor_transferencia
+                    break
+                print(f'Transferência realizada com sucesso!\nSaldo: {clientes[indice]["Saldo"]:.2f}')
+                break
 def invest(): # Função que faz operações livres 
     tipo_invest = input('Qual tipo de invstimento você deseja fazer?')
     investimento = float(input('Valor a investir: '))
